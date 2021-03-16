@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIAL</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .dial {
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+    }
+
+    .items {
+      /* transform: rotate(-0.5rad); */
+      will-change: transform;
+      transform-origin: 300px 300px;
+    }
+
+    .item {
+      transform-origin: inherit;
+      --offset: -250px;
+    }
+
+    /* This would be applied with JS at start */
+
+    /* .item1 {
+      transform: rotate(-1.2rad) translateY(var(--offset));
+    }
+
+    .item2 {
+      transform: rotate(-0.6rad) translateY(var(--offset));
+    }
+
+    .item3 {
+      transform: rotate(0deg) translateY(var(--offset));
+    }
+
+    .item4 {
+      transform: rotate(0.6rad) translateY(var(--offset));
+    }
+
+    .item5 {
+      transform: rotate(1.2rad) translateY(var(--offset));
+    } */
+
+    .letter {
+      font-size: 35px;
+      text-anchor: middle;
+    }
+  </style>
+</head>
+
+<body>
+  <svg id="dialCanvas" class="dial" viewBox="50 0 500 200">
+    <g id="dialTouchArea">
+      <path d="M 0,300 H 100 A 200,200 0 0 1 500,300 H 600 A 300,300 0 0 0 0,300 Z" style="fill:#3c3c3c;stroke:none;" />
+      <g id="dialItemsGroup" class="items">
+        <circle class="item item1" cx="0" cy="0" r="30" style="fill:yellow;" />
+        <circle class="item item2" cx="0" cy="0" r="30" style="fill:green;" />
+        <g class="item item3">
+          <g style="transform: rotate(20deg)">
+            <circle cx="0" cy="0" r="30" style="fill:pink;" />
+            <!-- <text class="letter" x="0" y="10">C</text> -->
+            <rect x="-15" y="-2.5" width="30" height="5" />
+          </g>
+        </g>
+        <circle class="item item4" cx="0" cy="0" r="30" style="fill:blue;" />
+        <circle class="item item5" cx="0" cy="0" r="30" style="fill:magenta;" />
+      </g>
+    </g>
+  </svg>
+
+  <script src="./script.js"></script>
+</body>
+
+</html>
