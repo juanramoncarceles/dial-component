@@ -49,32 +49,30 @@ function handleStart(e) {
   initialPoint = [touch.pageX, touch.pageY];
 }
 
+const dialItemsAmount = dialItems.length;
 let positionIndexOffset = 0;
-let firstItemPositionIndex = ((dialItems.length - 1) / 2) * -1; // firstVisibleItemIndex ?
+let firstItemPositionIndex = ((dialItemsAmount - 1) / 2) * -1;
 let firstVisibleItemIndex;
-let lastItemPositionIndex = (dialItems.length - 1) / 2;
-let currentLast = dialItems.length - 1;
 let currentLastVisible;
-let currentFirst = 0;
 let currentFirstVisible;
 
 /**
- * Called when rotating clockwise.
- * @param {*} positionOffset
+ * Called when passing an angle step when rotating clockwise.
+ * @param {number} positionOffset
  */
 function moveLastToBeginning(positionOffset) {
-  // Hide last visible from the right.
-  dialItems[currentLastVisible % dialItems.length].style.transform = "";
-  // TODO also display none
+  // Hide the one that was visible from the right.
+  dialItems[currentLastVisible].style.display = "none";
+  dialItems[currentLastVisible].style.transform = "";
   currentLastVisible--;
   currentLastVisible =
-    currentLastVisible < 0 ? dialItems.length - 1 : currentLastVisible;
+    currentLastVisible < 0 ? dialItemsAmount - 1 : currentLastVisible;
 
-  // Show new one from the left.
+  // Show a new one from the left.
   currentFirstVisible--;
   currentFirstVisible =
-    currentFirstVisible < 0 ? dialItems.length - 1 : currentFirstVisible;
-  // firstVisibleItemIndex--; // this is not necessary then...
+    currentFirstVisible < 0 ? dialItemsAmount - 1 : currentFirstVisible;
+  dialItems[currentFirstVisible].style.display = "unset";
   dialItems[currentFirstVisible].style.transform =
     "rotate(" +
     (firstVisibleItemIndex - positionOffset) * angleBetweenItems +
@@ -83,16 +81,26 @@ function moveLastToBeginning(positionOffset) {
   console.log(currentFirstVisible, currentLastVisible, firstVisibleItemIndex);
 }
 
+/**
+ * Called when passing an angle step when rotating counterclockwise.
+ * @param {number} positionOffset
+ */
 function moveFirstToEnd(positionOffset) {
-  // The last becomes the first.
-  dialItems[currentFirst % dialItems.length].style.transform =
-    "rotate(" +
-    (firstItemPositionIndex + positionOffset) * -1 * angleBetweenItems +
-    "rad) translate(300px, 50px)";
-  currentFirst++;
-  currentLast++;
+  // Hide the one that was visible from the left.
+  dialItems[currentFirstVisible % dialItemsAmount].style.display = "none";
+  dialItems[currentFirstVisible % dialItemsAmount].style.transform = "";
+  currentFirstVisible++;
 
-  // update firstVisibleItemIndex ?
+  // Show a new one from the right.
+  currentLastVisible++;
+  // TODO instead of using the modulus do something like above to wrap the index
+  dialItems[currentLastVisible % dialItemsAmount].style.display = "unset";
+  dialItems[currentLastVisible % dialItemsAmount].style.transform =
+    "rotate(" +
+    (firstVisibleItemIndex + positionOffset) * -1 * angleBetweenItems +
+    "rad) translate(300px, 50px)";
+
+  console.log(currentFirstVisible, currentLastVisible, firstVisibleItemIndex);
 }
 
 function distribute() {
@@ -105,14 +113,14 @@ function distribute() {
     const itemAngle = start * angleBetweenItems;
 
     if (itemAngle < -angleLimit) {
-      // Hide the item and update the counters for the next item.
-      // TODO apply just a display none
+      // Hide if it is out of the negative angle limit.
+      item.style.display = "none";
+      // Update counters to detect the first visible.
       currentFirstVisibleCounter++;
       firstVisibleItemIndex++;
     } else if (itemAngle > angleLimit) {
-      // Set the positive angle limit.
-      item.style.transform =
-        "rotate(" + angleLimit + "rad) translate(300px, 50px)";
+      // Hide if it is out of the positive angle limit.
+      item.style.display = "none";
     } else {
       // Set the real angle.
       item.style.transform =
@@ -122,7 +130,7 @@ function distribute() {
   }
 
   currentFirstVisible = currentFirstVisibleCounter;
-  currentLastVisible = dialItems.length - 1 - currentFirstVisibleCounter;
+  currentLastVisible = dialItemsAmount - 1 - currentFirstVisibleCounter;
 
   console.log(currentFirstVisible, currentLastVisible, firstVisibleItemIndex);
 }
