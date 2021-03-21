@@ -18,14 +18,12 @@
     }
 
     .items {
-      /* transform: rotate(-0.5rad); */
       will-change: transform;
       transform-origin: 300px 300px;
     }
 
     .item {
       transform-origin: inherit;
-      /* --offset: -250px; */
     }
 
     /* .letter {
@@ -41,23 +39,73 @@
     <g id="dialTouchArea">
       <path d="M 0,300 H 100 A 200,200 0 0 1 500,300 H 600 A 300,300 0 0 0 0,300 Z" style="fill:#3c3c3c;stroke:none;" />
       <g id="dialItemsGroup" class="items">
-        <circle class="item" cx="0" cy="0" r="30" style="fill: yellow;" />
-        <circle class="item" cx="0" cy="0" r="30" style="fill: green;" />
         <g class="item">
-          <g style="transform: rotate(20deg)">
-            <circle cx="0" cy="0" r="30" style="fill:pink;" />
-            <!-- <text class="letter" x="0" y="10">C</text> -->
+          <g style="transform: rotate(calc(3.0rad - var(--current-angle, 3.0rad)))">
+            <circle cx="0" cy="0" r="30" style="fill: yellow;" />
             <rect x="-15" y="-2.5" width="30" height="5" />
           </g>
         </g>
-        <circle class="item" cx="0" cy="0" r="30" style="fill: blue;" />
-        <circle class="item" cx="0" cy="0" r="30" style="fill: magenta;" />
-        <circle class="item" cx="0" cy="0" r="30" style="fill: cyan;" />
-        <circle class="item" cx="0" cy="0" r="30" style="fill: brown;" />
-        <circle class="item" cx="0" cy="0" r="30" style="fill: lightgreen;" />
-        <circle class="item" cx="0" cy="0" r="30" style="fill: red;" />
-        <circle class="item" cx="0" cy="0" r="30" style="fill: orange;" />
-        <circle class="item" cx="0" cy="0" r="30" style="fill: purple;" />
+        <g class="item">
+          <g style="transform: rotate(calc(2.4rad - var(--current-angle, 2.4rad)))">
+            <circle cx="0" cy="0" r="30" style="fill: green;" />
+            <rect x="-15" y="-2.5" width="30" height="5" />
+          </g>
+        </g>
+        <g class="item">
+          <g style="transform: rotate(calc(1.8rad - var(--current-angle, 1.8rad)))">
+            <circle cx="0" cy="0" r="30" style="fill:pink;" />
+            <rect x="-15" y="-2.5" width="30" height="5" />
+            <!-- <text class="letter" x="0" y="10">C</text> -->
+          </g>
+        </g>
+        <g class="item">
+          <g style="transform: rotate(calc(1.2rad - var(--current-angle, 1.2rad)))">
+            <circle cx="0" cy="0" r="30" style="fill: blue;" />
+            <rect x="-15" y="-2.5" width="30" height="5" />
+          </g>
+        </g>
+        <g class="item">
+          <g style="transform: rotate(calc(0.6rad - var(--current-angle, 0.6rad)))">
+            <circle cx="0" cy="0" r="30" style="fill: magenta;" />
+            <rect x="-15" y="-2.5" width="30" height="5" />
+          </g>
+        </g>
+        <g class="item">
+          <g style="transform: rotate(calc(0rad - var(--current-angle, 0rad)))">
+            <circle cx="0" cy="0" r="30" style="fill: cyan;" />
+            <rect x="-15" y="-2.5" width="30" height="5" />
+          </g>
+        </g>
+        <g class="item">
+          <g style="transform: rotate(calc(-0.6rad - var(--current-angle, -0.6rad)))">
+            <circle cx="0" cy="0" r="30" style="fill: brown;" />
+            <rect x="-15" y="-2.5" width="30" height="5" />
+          </g>
+        </g>
+        <g class="item">
+          <g style="transform: rotate(calc(-1.2rad - var(--current-angle, -1.2rad)))">
+            <circle cx="0" cy="0" r="30" style="fill: lightgreen;" />
+            <rect x="-15" y="-2.5" width="30" height="5" />
+          </g>
+        </g>
+        <g class="item">
+          <g style="transform: rotate(calc(-1.8rad - var(--current-angle, -1.8rad)))">
+            <circle cx="0" cy="0" r="30" style="fill: red;" />
+            <rect x="-15" y="-2.5" width="30" height="5" />
+          </g>
+        </g>
+        <g class="item">
+          <g style="transform: rotate(calc(-2.4rad - var(--current-angle, -2.4rad)))">
+            <circle cx="0" cy="0" r="30" style="fill: orange;" />
+            <rect x="-15" y="-2.5" width="30" height="5" />
+          </g>
+        </g>
+        <g class="item">
+          <g style="transform: rotate(calc(-3.0rad - var(--current-angle, -3.0rad)))">
+            <circle cx="0" cy="0" r="30" style="fill: purple;" />
+            <rect x="-15" y="-2.5" width="30" height="5" />
+          </g>
+        </g>
       </g>
     </g>
   </svg>

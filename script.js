@@ -9,9 +9,12 @@
 
 // si no se pone la opcion wrap entonces habrá un tope de rotacion cuando se llegue al ultimo.
 
-// use transform matrix instead ?
+// use transform matrix instead? it seems complex: https://meyerweb.com/eric/tools/matrix/
 
 // use transforms with z = 0 for hardware acceleration ?
+
+// Example of transformation applied to a the element (the first one on the left):
+// transform: rotate(-0.6rad) translate(0px, -250px) rotate(0.6rad) translate(300px, 300px) ;
 
 const dial = document.getElementById("dialTouchArea");
 const dialCanvas = document.getElementById("dialCanvas");
@@ -22,6 +25,7 @@ dial.addEventListener("touchstart", handleStart, false);
 dial.addEventListener("touchmove", handleMove, false);
 dial.addEventListener("touchend", handleEnd, false);
 
+const straighten = true;
 let moving = false;
 let initialPoint;
 let previousTouch;
@@ -126,6 +130,14 @@ function distribute() {
       item.style.transform =
         "rotate(" + itemAngle + "rad) translate(300px, 50px)";
     }
+
+    if (straighten) {
+      // This css variable will be the responsible to keep the items horizontal.
+      dialItemsGroup.style.setProperty("--current-angle", "0rad");
+
+      // TODO apply to each item its initial angle rotation (like the one set inline now)
+    }
+
     start++;
   }
 
@@ -158,6 +170,11 @@ function handleMove(e) {
       positionIndexOffset = Math.ceil(currentAngle / angleBetweenItems);
       console.log("counterclockwise shift");
       moveFirstToEnd(positionIndexOffset);
+    }
+
+    if (straighten) {
+      // By setting this value css calc() will keep items horizontal.
+      dialItemsGroup.style.setProperty("--current-angle", currentAngle + "rad");
     }
 
     dialItemsGroup.style.transform = "rotate(" + currentAngle + "rad)";
