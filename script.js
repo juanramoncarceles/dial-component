@@ -1,11 +1,6 @@
 // The amount of items can be very few or a lot but they should seem continuous when rotating
 
-// make an option to keep the items horizontal.
-// maybe the component <symbol> would be easier ?
-
 // would be faster with transform attribute instead of styles ?
-
-// la antirotacion se ha de aplicar solo a los elementos visibles.
 
 // si no se pone la opcion wrap entonces habrá un tope de rotacion cuando se llegue al ultimo.
 
@@ -16,8 +11,11 @@
 // Example of transformation applied to a the element (the first one on the left):
 // transform: rotate(-0.6rad) translate(0px, -250px) rotate(0.6rad) translate(300px, 300px) ;
 
+// when scrolling over rotate the dial?
+
 const dial = document.getElementById("dialTouchArea");
 const dialCanvas = document.getElementById("dialCanvas");
+const dialSemicircle = document.getElementById("dialSemicircle");
 const dialItemsGroup = document.getElementById("dialItemsGroup");
 const dialItems = dialItemsGroup.children;
 
@@ -41,10 +39,44 @@ const distributionAngleThreshold = Math.PI;
 
 dialItemsGroup.style.transform = "rotate(" + initialAngle + "rad)";
 
+// The outer dimensions of the dial semicircle in SVG coordinates.
+const SEMICIRCLEWIDTH = 600;
+const SEMICIRCLEHEIGHT = 300;
+
+const middleButtonHeight = 40;
+const semiCircleThickness = 100;
+
+const arcAxis = semiCircleThickness / 2;
+
+const semiCircleInnerRadius = SEMICIRCLEHEIGHT - semiCircleThickness;
+
+const viewBoxHeight = middleButtonHeight + semiCircleThickness;
+
+const viewBoxWidth =
+  semiCircleInnerRadius *
+  Math.sin(
+    Math.acos((SEMICIRCLEHEIGHT - viewBoxHeight) / semiCircleInnerRadius)
+  ) *
+  2;
+
+dialCanvas.setAttribute(
+  "viewBox",
+  `${(SEMICIRCLEWIDTH - viewBoxWidth) / 2} 0 ${viewBoxWidth} ${viewBoxHeight}`
+);
+
+const semiCirclePath = `M 0,300 H ${semiCircleThickness} A ${semiCircleInnerRadius},${semiCircleInnerRadius} 0 0 1 ${
+  SEMICIRCLEHEIGHT * 2 - semiCircleThickness
+},300 H 600 A 300,300 0 0 0 0,300 Z`;
+
+dialSemicircle.setAttribute("d", semiCirclePath);
+
 const x = window.innerWidth / 2;
 const y =
   window.innerHeight +
-  ((300 - 200) * dialCanvas.getBoundingClientRect().height) / 200;
+  ((SEMICIRCLEHEIGHT - viewBoxHeight) *
+    dialCanvas.getBoundingClientRect().height) /
+    viewBoxHeight;
+
 let centerPoint = [x, y];
 
 function handleStart(e) {
@@ -80,7 +112,9 @@ function moveLastToBeginning(positionOffset) {
   dialItems[currentFirstVisible].style.transform =
     "rotate(" +
     (firstVisibleItemIndex - positionOffset) * angleBetweenItems +
-    "rad) translate(300px, 50px)";
+    "rad) translate(300px, " +
+    arcAxis +
+    "px)";
 
   console.log(currentFirstVisible, currentLastVisible, firstVisibleItemIndex);
 }
@@ -102,7 +136,9 @@ function moveFirstToEnd(positionOffset) {
   dialItems[currentLastVisible % dialItemsAmount].style.transform =
     "rotate(" +
     (firstVisibleItemIndex + positionOffset) * -1 * angleBetweenItems +
-    "rad) translate(300px, 50px)";
+    "rad) translate(300px, " +
+    arcAxis +
+    "px)";
 
   console.log(currentFirstVisible, currentLastVisible, firstVisibleItemIndex);
 }
@@ -128,7 +164,7 @@ function distribute() {
     } else {
       // Set the real angle.
       item.style.transform =
-        "rotate(" + itemAngle + "rad) translate(300px, 50px)";
+        "rotate(" + itemAngle + "rad) translate(300px, " + arcAxis + "px)";
     }
 
     if (straighten) {

@@ -34,10 +34,33 @@
 </head>
 
 <body>
-  <!-- viewBox="50 0 500 200" -->
+  <!-- viewBox="50 0 500 200"    150 0 300 167 -->
   <svg id="dialCanvas" class="dial" viewBox="0 0 600 300">
+
+    <symbol id="" viewBox="0 0 24 24" height="72" width="72">
+
+    </symbol>
+    <symbol id="assessment" viewBox="0 0 24 24" height="72" width="72">
+      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z" />
+    </symbol>
+    <symbol id="cart" viewBox="0 0 24 24" height="72" width="72">
+      <path d="M15.55 13c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.37-.66-.11-1.48-.87-1.48H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2h7.45zM6.16 6h12.15l-2.76 5H8.53L6.16 6zM7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
+    </symbol>
+    <symbol id="colors" viewBox="0 0 24 24" height="72" width="72">
+      <path d="M12,4.81L12,19c-3.31,0-6-2.63-6-5.87c0-1.56,0.62-3.03,1.75-4.14L12,4.81 M12,2L6.35,7.56l0,0C4.9,8.99,4,10.96,4,13.13 C4,17.48,7.58,21,12,21c4.42,0,8-3.52,8-7.87c0-2.17-0.9-4.14-2.35-5.57l0,0L12,2z" />
+    </symbol>
+    <symbol id="play" viewBox="0 0 24 24" height="72" width="72">
+      <path d="M10 16.5l6-4.5-6-4.5zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+    </symbol>
+    <symbol id="piano" viewBox="0 0 24 24" height="72" width="72">
+      <path d="M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M14,14.5h0.25V19h-4.5v-4.5H10 c0.55,0,1-0.45,1-1V5h2v8.5C13,14.05,13.45,14.5,14,14.5z M5,5h2v8.5c0,0.55,0.45,1,1,1h0.25V19H5V5z M19,19h-3.25v-4.5H16 c0.55,0,1-0.45,1-1V5h2V19z" />
+    </symbol>
+    <symbol id="headphones" viewBox="0 0 24 24" height="72" width="72">
+      <path d="M12,3c-4.97,0-9,4.03-9,9v7c0,1.1,0.9,2,2,2h4v-8H5v-1c0-3.87,3.13-7,7-7s7,3.13,7,7v1h-4v8h4c1.1,0,2-0.9,2-2v-7 C21,7.03,16.97,3,12,3z M7,15v4H5v-4H7z M19,19h-2v-4h2V19z" />
+    </symbol>
+
     <g id="dialTouchArea">
-      <path d="M 0,300 H 100 A 200,200 0 0 1 500,300 H 600 A 300,300 0 0 0 0,300 Z" style="fill:#3c3c3c;stroke:none;" />
+      <path id="dialSemicircle" d="M 0,300 H 100 A 200,200 0 0 1 500,300 H 600 A 300,300 0 0 0 0,300 Z" style="fill:#3c3c3c;stroke:none;" />
       <g id="dialItemsGroup" class="items">
         <g class="item">
           <g style="transform: rotate(calc(3.0rad - var(--current-angle, 3.0rad)))">
@@ -55,37 +78,42 @@
           <g style="transform: rotate(calc(1.8rad - var(--current-angle, 1.8rad)))">
             <circle cx="0" cy="0" r="30" style="fill:pink;" />
             <rect x="-15" y="-2.5" width="30" height="5" />
-            <!-- <text class="letter" x="0" y="10">C</text> -->
+            <use href="#assessment" x="-36" y="-36" />
           </g>
         </g>
         <g class="item">
           <g style="transform: rotate(calc(1.2rad - var(--current-angle, 1.2rad)))">
             <circle cx="0" cy="0" r="30" style="fill: blue;" />
             <rect x="-15" y="-2.5" width="30" height="5" />
+            <use href="#colors" x="-36" y="-36" />
           </g>
         </g>
         <g class="item">
           <g style="transform: rotate(calc(0.6rad - var(--current-angle, 0.6rad)))">
             <circle cx="0" cy="0" r="30" style="fill: magenta;" />
             <rect x="-15" y="-2.5" width="30" height="5" />
+            <use href="#headphones" x="-36" y="-36" />
           </g>
         </g>
         <g class="item">
           <g style="transform: rotate(calc(0rad - var(--current-angle, 0rad)))">
             <circle cx="0" cy="0" r="30" style="fill: cyan;" />
             <rect x="-15" y="-2.5" width="30" height="5" />
+            <use href="#piano" x="-36" y="-36" />
           </g>
         </g>
         <g class="item">
           <g style="transform: rotate(calc(-0.6rad - var(--current-angle, -0.6rad)))">
             <circle cx="0" cy="0" r="30" style="fill: brown;" />
             <rect x="-15" y="-2.5" width="30" height="5" />
+            <use href="#play" x="-36" y="-36" />
           </g>
         </g>
         <g class="item">
           <g style="transform: rotate(calc(-1.2rad - var(--current-angle, -1.2rad)))">
             <circle cx="0" cy="0" r="30" style="fill: lightgreen;" />
             <rect x="-15" y="-2.5" width="30" height="5" />
+            <use href="#cart" x="-36" y="-36" />
           </g>
         </g>
         <g class="item">
