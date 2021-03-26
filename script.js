@@ -125,15 +125,19 @@ function moveLastToBeginning(positionOffset) {
  */
 function moveFirstToEnd(positionOffset) {
   // Hide the one that was visible from the left.
-  dialItems[currentFirstVisible % dialItemsAmount].style.display = "none";
-  dialItems[currentFirstVisible % dialItemsAmount].style.transform = "";
+  dialItems[currentFirstVisible].style.display = "none";
+  dialItems[currentFirstVisible].style.transform = "";
   currentFirstVisible++;
+  currentFirstVisible =
+    currentFirstVisible > dialItemsAmount - 1 ? 0 : currentFirstVisible;
 
   // Show a new one from the right.
   currentLastVisible++;
+  currentLastVisible =
+    currentLastVisible > dialItemsAmount - 1 ? 0 : currentLastVisible;
   // TODO instead of using the modulus do something like above to wrap the index
-  dialItems[currentLastVisible % dialItemsAmount].style.display = "unset";
-  dialItems[currentLastVisible % dialItemsAmount].style.transform =
+  dialItems[currentLastVisible].style.display = "unset";
+  dialItems[currentLastVisible].style.transform =
     "rotate(" +
     (firstVisibleItemIndex + positionOffset) * -1 * angleBetweenItems +
     "rad) translate(300px, " +
