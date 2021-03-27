@@ -14,6 +14,8 @@ const dial = document.getElementById("dialTouchArea");
 const dialCanvas = document.getElementById("dialCanvas");
 const dialSemicircle = document.getElementById("dialSemicircle");
 const dialItemsGroup = document.getElementById("dialItemsGroup");
+const middleCircle = document.getElementById("middleCircle");
+const arcGradient = document.getElementById("arcGradient");
 const dialItems = dialItemsGroup.children;
 
 dial.addEventListener("touchstart", handleStart, false);
@@ -27,7 +29,7 @@ let previousTouch;
 let currentTouch;
 let initialAngle = 0;
 let currentAngle;
-let angleBetweenItems = 0.6;
+let angleBetweenItems = 0.2;
 /**
  * This is the angle area of the arc that is used to ditribute items.
  * TODO This could be dynamic depending on the case.
@@ -41,11 +43,15 @@ const SEMICIRCLEWIDTH = 600;
 const SEMICIRCLEHEIGHT = 300;
 
 const middleButtonHeight = 40;
-const semiCircleThickness = 100;
+const semiCircleThickness = 50;
 
 const arcAxis = semiCircleThickness / 2;
 
 const semiCircleInnerRadius = SEMICIRCLEHEIGHT - semiCircleThickness;
+
+const absoluteArcAxis = semiCircleInnerRadius + semiCircleThickness / 2;
+
+middleCircle.setAttribute("r", semiCircleInnerRadius);
 
 const viewBoxHeight = middleButtonHeight + semiCircleThickness;
 
@@ -60,6 +66,17 @@ dialCanvas.setAttribute(
   "viewBox",
   `${(SEMICIRCLEWIDTH - viewBoxWidth) / 2} 0 ${viewBoxWidth} ${viewBoxHeight}`
 );
+
+arcGradient.setAttribute(
+  "gradientTransform",
+  "translate(" +
+    (SEMICIRCLEWIDTH - viewBoxWidth) / 2 +
+    ", " +
+    (SEMICIRCLEHEIGHT - viewBoxHeight / 2) +
+    ")"
+);
+arcGradient.setAttribute("fr", semiCircleInnerRadius);
+arcGradient.setAttribute("r", semiCircleInnerRadius + 15);
 
 const semiCirclePath = `M 0,300 H ${semiCircleThickness} A ${semiCircleInnerRadius},${semiCircleInnerRadius} 0 0 1 ${
   SEMICIRCLEHEIGHT * 2 - semiCircleThickness
@@ -110,7 +127,9 @@ function moveLastToBeginning(positionOffset) {
   dialItems[currentFirstVisible].style.transform =
     "rotate(" +
     newAngle +
-    "rad) translate(0px, -250px) rotate(calc(" +
+    "rad) translate(0px, -" +
+    absoluteArcAxis +
+    "px) rotate(calc(" +
     -newAngle +
     "rad - var(--current-angle, " +
     -newAngle +
@@ -141,7 +160,9 @@ function moveFirstToEnd(positionOffset) {
   dialItems[currentLastVisible].style.transform =
     "rotate(" +
     -newAngle +
-    "rad) translate(0px, -250px) rotate(calc(" +
+    "rad) translate(0px, -" +
+    absoluteArcAxis +
+    "px) rotate(calc(" +
     newAngle +
     "rad - var(--current-angle, " +
     newAngle +
