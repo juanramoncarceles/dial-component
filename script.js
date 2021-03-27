@@ -8,9 +8,6 @@
 
 // use transforms with z = 0 for hardware acceleration ?
 
-// Example of transformation applied to a the element (the first one on the left):
-// transform: rotate(-0.6rad) translate(0px, -250px) rotate(0.6rad) translate(300px, 300px) ;
-
 // when scrolling over rotate the dial?
 
 const dial = document.getElementById("dialTouchArea");
@@ -109,12 +106,15 @@ function moveLastToBeginning(positionOffset) {
   currentFirstVisible =
     currentFirstVisible < 0 ? dialItemsAmount - 1 : currentFirstVisible;
   dialItems[currentFirstVisible].style.display = "unset";
+  const newAngle = (firstVisibleItemIndex - positionOffset) * angleBetweenItems;
   dialItems[currentFirstVisible].style.transform =
     "rotate(" +
-    (firstVisibleItemIndex - positionOffset) * angleBetweenItems +
-    "rad) translate(300px, " +
-    arcAxis +
-    "px)";
+    newAngle +
+    "rad) translate(0px, -250px) rotate(calc(" +
+    -newAngle +
+    "rad - var(--current-angle, " +
+    -newAngle +
+    "rad))) translate(300px, 300px)";
 
   console.log(currentFirstVisible, currentLastVisible, firstVisibleItemIndex);
 }
@@ -137,12 +137,15 @@ function moveFirstToEnd(positionOffset) {
     currentLastVisible > dialItemsAmount - 1 ? 0 : currentLastVisible;
   // TODO instead of using the modulus do something like above to wrap the index
   dialItems[currentLastVisible].style.display = "unset";
+  const newAngle = (firstVisibleItemIndex + positionOffset) * angleBetweenItems;
   dialItems[currentLastVisible].style.transform =
     "rotate(" +
-    (firstVisibleItemIndex + positionOffset) * -1 * angleBetweenItems +
-    "rad) translate(300px, " +
-    arcAxis +
-    "px)";
+    -newAngle +
+    "rad) translate(0px, -250px) rotate(calc(" +
+    newAngle +
+    "rad - var(--current-angle, " +
+    newAngle +
+    "rad))) translate(300px, 300px)";
 
   console.log(currentFirstVisible, currentLastVisible, firstVisibleItemIndex);
 }
@@ -168,7 +171,15 @@ function distribute() {
     } else {
       // Set the real angle.
       item.style.transform =
-        "rotate(" + itemAngle + "rad) translate(300px, " + arcAxis + "px)";
+        "rotate(" +
+        itemAngle +
+        "rad) translate(0px, " +
+        (SEMICIRCLEHEIGHT - arcAxis) * -1 +
+        "px) rotate(calc(" +
+        -itemAngle +
+        "rad - var(--current-angle, " +
+        -itemAngle +
+        "rad))) translate(300px, 300px)";
     }
 
     if (straighten) {
