@@ -1,15 +1,3 @@
-// The amount of items can be very few or a lot but they should seem continuous when rotating
-
-// would be faster with transform attribute instead of styles ?
-
-// si no se pone la opcion wrap entonces habrá un tope de rotacion cuando se llegue al ultimo.
-
-// use transform matrix instead? it seems complex: https://meyerweb.com/eric/tools/matrix/
-
-// use transforms with z = 0 for hardware acceleration ?
-
-// when scrolling over rotate the dial?
-
 const dial = document.getElementById("dialTouchArea");
 const dialCanvas = document.getElementById("dialCanvas");
 const dialSemicircle = document.getElementById("dialSemicircle");
@@ -29,7 +17,7 @@ let previousTouch;
 let currentTouch;
 let initialAngle = 0;
 let currentAngle;
-let angleBetweenItems = 0.2;
+const angleBetweenItems = 0.2;
 /**
  * This is the angle area of the arc that is used to ditribute items.
  * TODO This could be dynamic depending on the case.
@@ -108,16 +96,18 @@ let currentFirstVisible;
 
 /**
  * Called when passing an angle step when rotating clockwise.
- * @param {number} positionOffset
+ * Applies a transformation to show a new item from the left,
+ * and to hide the current right-most item.
+ * @param {number} positionOffset Integer that corresponds to the amount
+ * of passed angle steps for the current rotation from the initial rotation.
  */
-function moveLastToBeginning(positionOffset) {
+function negativeRotationItemReposition(positionOffset) {
   // Hide the one that was visible from the right.
   dialItems[currentLastVisible].style.display = "none";
   dialItems[currentLastVisible].style.transform = "";
   currentLastVisible--;
   currentLastVisible =
     currentLastVisible < 0 ? dialItemsAmount - 1 : currentLastVisible;
-
   // Show a new one from the left.
   currentFirstVisible--;
   currentFirstVisible =
@@ -134,27 +124,26 @@ function moveLastToBeginning(positionOffset) {
     "rad - var(--current-angle, " +
     -newAngle +
     "rad))) translate(300px, 300px)";
-
-  console.log(currentFirstVisible, currentLastVisible, firstVisibleItemIndex);
 }
 
 /**
  * Called when passing an angle step when rotating counterclockwise.
- * @param {number} positionOffset
+ * Applies a transformation to show a new item from the right,
+ * and to hide the current left-most item.
+ * @param {number} positionOffset Integer that corresponds to the amount
+ * of passed angle steps for the current rotation from the initial rotation.
  */
-function moveFirstToEnd(positionOffset) {
+function positiveRotationItemReposition(positionOffset) {
   // Hide the one that was visible from the left.
   dialItems[currentFirstVisible].style.display = "none";
   dialItems[currentFirstVisible].style.transform = "";
   currentFirstVisible++;
   currentFirstVisible =
     currentFirstVisible > dialItemsAmount - 1 ? 0 : currentFirstVisible;
-
   // Show a new one from the right.
   currentLastVisible++;
   currentLastVisible =
     currentLastVisible > dialItemsAmount - 1 ? 0 : currentLastVisible;
-  // TODO instead of using the modulus do something like above to wrap the index
   dialItems[currentLastVisible].style.display = "unset";
   const newAngle = (firstVisibleItemIndex + positionOffset) * angleBetweenItems;
   dialItems[currentLastVisible].style.transform =
@@ -167,8 +156,6 @@ function moveFirstToEnd(positionOffset) {
     "rad - var(--current-angle, " +
     newAngle +
     "rad))) translate(300px, 300px)";
-
-  console.log(currentFirstVisible, currentLastVisible, firstVisibleItemIndex);
 }
 
 function distribute() {
@@ -237,11 +224,11 @@ function handleMove(e) {
     if (currentAngle / angleBetweenItems > positionIndexOffset + 1) {
       positionIndexOffset = Math.floor(currentAngle / angleBetweenItems);
       console.log("clockwise shift", positionIndexOffset);
-      moveLastToBeginning(positionIndexOffset);
+      negativeRotationItemReposition(positionIndexOffset);
     } else if (currentAngle / angleBetweenItems < positionIndexOffset - 1) {
       positionIndexOffset = Math.ceil(currentAngle / angleBetweenItems);
       console.log("counterclockwise shift");
-      moveFirstToEnd(positionIndexOffset);
+      positiveRotationItemReposition(positionIndexOffset);
     }
 
     if (straighten) {

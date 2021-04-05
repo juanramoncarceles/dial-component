@@ -1,0 +1,9 @@
+Features:
+  ☐ Add links or click handlers to items. @high
+  ☐ If the wrap option is not set, then there should be a rotation limit to each side.
+  ☐ When scrolling over rotate the dial?
+
+Investigate:
+  ☐ Use transform attributes instead of inline css styles? Would it be faster?
+  ☐ Use transforms with z = 0, it enables hardware acceleration?
+  ☐ Using transform matrix would be more performant? It seems complex: https://meyerweb.com/eric/tools/matrix/
