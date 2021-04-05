@@ -7,3 +7,39 @@ Investigate:
   ☐ Use transform attributes instead of inline css styles? Would it be faster?
   ☐ Use transforms with z = 0, it enables hardware acceleration?
   ☐ Using transform matrix would be more performant? It seems complex: https://meyerweb.com/eric/tools/matrix/
+
+
+
+
+
+  /*
+ * Calculates the angle ABC (in radians)
+ * pt1 first point, ex: [x, y]
+ * pt2 second point
+ * origin center point
+ */
+function angle3Points2(pt1, pt2, origin) {
+  const AB = Math.sqrt(
+    Math.pow(origin[0] - pt1[0], 2) + Math.pow(origin[1] - pt1[1], 2)
+  );
+  const BC = Math.sqrt(
+    Math.pow(origin[0] - pt2[0], 2) + Math.pow(origin[1] - pt2[1], 2)
+  );
+  const AC = Math.sqrt(
+    Math.pow(pt2[0] - pt1[0], 2) + Math.pow(pt2[1] - pt1[1], 2)
+  );
+  return Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB));
+}
+
+
+
+/*
+  To normalize it to the range [0, 2 π):
+
+  if (angle < 0) { angle += 2 * M_PI; }
+  
+  or to the range (-π, π]:
+  
+  if (angle > M_PI)        { angle -= 2 * M_PI; }
+  else if (angle <= -M_PI) { angle += 2 * M_PI; }
+*/

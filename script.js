@@ -10,25 +10,39 @@ dial.addEventListener("touchstart", handleStart, false);
 dial.addEventListener("touchmove", handleMove, false);
 dial.addEventListener("touchend", handleEnd, false);
 
+/**
+ * If true the dial items will be always horizontal by applying a counter rotation.
+ */
 const straighten = true;
+/**
+ * The angle between each of the items in the dial in radians.
+ */
+const angleBetweenItems = 0.2;
+
+/**
+ * Internal variables.
+ */
 let moving = false;
 let initialPoint;
 let previousTouch;
 let currentTouch;
 let initialAngle = 0;
 let currentAngle;
-const angleBetweenItems = 0.2;
+
 /**
  * This is the angle area of the arc that is used to ditribute items.
  * TODO This could be dynamic depending on the case.
  */
 const distributionAngleThreshold = Math.PI;
 
+/**
+ * Applying the initial rotation to the dial.
+ */
 dialItemsGroup.style.transform = "rotate(" + initialAngle + "rad)";
 
 // The outer dimensions of the dial semicircle in SVG coordinates.
 const SEMICIRCLEWIDTH = 600;
-const SEMICIRCLEHEIGHT = 300;
+const SEMICIRCLEHEIGHT = 300; // TODO rename to DIAL_EXTERNAL_RADIUS = 300
 
 const middleButtonHeight = 40;
 const semiCircleThickness = 50;
@@ -90,9 +104,37 @@ function handleStart(e) {
 const dialItemsAmount = dialItems.length;
 let positionIndexOffset = 0;
 let firstItemPositionIndex = ((dialItemsAmount - 1) / 2) * -1;
+/**
+ * The item index of the first item visible from the left.
+ * The item index is the index of the item counting from the middle item.
+ * For example, for three items their indexes would be: -1 0 1
+ */
 let firstVisibleItemIndex;
+/**
+ * Index of the current last visible item (the right-most item) in the dialItems array.
+ */
 let currentLastVisible;
+/**
+ * Index of the current first visible item (the left-most item) in the dialItems array.
+ */
 let currentFirstVisible;
+
+function createItemTransformation(positionOffset, rotationDirection) {
+  if (rotationDirection) positionOffset = positionOffset * -1;
+  let newAngle = (firstVisibleItemIndex - positionOffset) * angleBetweenItems;
+  if (rotationDirection) newAngle = newAngle * -1;
+  return (
+    "rotate(" +
+    newAngle +
+    "rad) translate(0px, -" +
+    absoluteArcAxis +
+    "px) rotate(calc(" +
+    -newAngle +
+    "rad - var(--current-angle, " +
+    -newAngle +
+    "rad))) translate(300px, 300px)"
+  );
+}
 
 /**
  * Called when passing an angle step when rotating clockwise.
@@ -113,17 +155,10 @@ function negativeRotationItemReposition(positionOffset) {
   currentFirstVisible =
     currentFirstVisible < 0 ? dialItemsAmount - 1 : currentFirstVisible;
   dialItems[currentFirstVisible].style.display = "unset";
-  const newAngle = (firstVisibleItemIndex - positionOffset) * angleBetweenItems;
-  dialItems[currentFirstVisible].style.transform =
-    "rotate(" +
-    newAngle +
-    "rad) translate(0px, -" +
-    absoluteArcAxis +
-    "px) rotate(calc(" +
-    -newAngle +
-    "rad - var(--current-angle, " +
-    -newAngle +
-    "rad))) translate(300px, 300px)";
+  dialItems[currentFirstVisible].style.transform = createItemTransformation(
+    positionOffset,
+    false
+  );
 }
 
 /**
@@ -145,17 +180,10 @@ function positiveRotationItemReposition(positionOffset) {
   currentLastVisible =
     currentLastVisible > dialItemsAmount - 1 ? 0 : currentLastVisible;
   dialItems[currentLastVisible].style.display = "unset";
-  const newAngle = (firstVisibleItemIndex + positionOffset) * angleBetweenItems;
-  dialItems[currentLastVisible].style.transform =
-    "rotate(" +
-    -newAngle +
-    "rad) translate(0px, -" +
-    absoluteArcAxis +
-    "px) rotate(calc(" +
-    newAngle +
-    "rad - var(--current-angle, " +
-    newAngle +
-    "rad))) translate(300px, 300px)";
+  dialItems[currentLastVisible].style.transform = createItemTransformation(
+    positionOffset,
+    true
+  );
 }
 
 function distribute() {
@@ -193,8 +221,6 @@ function distribute() {
     if (straighten) {
       // This css variable will be the responsible to keep the items horizontal.
       dialItemsGroup.style.setProperty("--current-angle", "0rad");
-
-      // TODO apply to each item its initial angle rotation (like the one set inline now)
     }
 
     start++;
@@ -202,8 +228,6 @@ function distribute() {
 
   currentFirstVisible = currentFirstVisibleCounter;
   currentLastVisible = dialItemsAmount - 1 - currentFirstVisibleCounter;
-
-  console.log(currentFirstVisible, currentLastVisible, firstVisibleItemIndex);
 }
 
 distribute();
@@ -223,11 +247,9 @@ function handleMove(e) {
 
     if (currentAngle / angleBetweenItems > positionIndexOffset + 1) {
       positionIndexOffset = Math.floor(currentAngle / angleBetweenItems);
-      console.log("clockwise shift", positionIndexOffset);
       negativeRotationItemReposition(positionIndexOffset);
     } else if (currentAngle / angleBetweenItems < positionIndexOffset - 1) {
       positionIndexOffset = Math.ceil(currentAngle / angleBetweenItems);
-      console.log("counterclockwise shift");
       positiveRotationItemReposition(positionIndexOffset);
     }
 
@@ -245,28 +267,6 @@ function handleEnd() {
   initialAngle = currentAngle;
 }
 
-// TODO Angle direction missing?
-// refactor to use arrays, it will be faster?
-
-/*
- * Calculates the angle ABC (in radians)
- * pt1 first point, ex: [x, y]
- * pt2 second point
- * origin center point
- */
-function angle3Points2(pt1, pt2, origin) {
-  const AB = Math.sqrt(
-    Math.pow(origin[0] - pt1[0], 2) + Math.pow(origin[1] - pt1[1], 2)
-  );
-  const BC = Math.sqrt(
-    Math.pow(origin[0] - pt2[0], 2) + Math.pow(origin[1] - pt2[1], 2)
-  );
-  const AC = Math.sqrt(
-    Math.pow(pt2[0] - pt1[0], 2) + Math.pow(pt2[1] - pt1[1], 2)
-  );
-  return Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB));
-}
-
 function vector(end, origin) {
   return [end[0] - origin[0], end[1] - origin[1]];
 }
@@ -276,13 +276,3 @@ function angle3Points(pt1, pt2, origin) {
   const v2 = vector(pt2, origin);
   return Math.atan2(v1[1], v1[0]) - Math.atan2(v2[1], v2[0]);
 }
-
-/*
-  To normalize it to the range [0, 2 π):
-
-  if (angle < 0) { angle += 2 * M_PI; }
-  or to the range (-π, π]:
-  
-  if (angle > M_PI)        { angle -= 2 * M_PI; }
-  else if (angle <= -M_PI) { angle += 2 * M_PI; }
-*/
