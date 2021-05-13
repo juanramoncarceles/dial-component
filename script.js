@@ -23,11 +23,8 @@ const angleBetweenItems = 0.2;
  * Internal variables.
  */
 let moving = false;
-let initialPoint;
-let previousTouch;
-let currentTouch;
 let initialAngle = 0;
-let currentAngle;
+let initialPoint, previousTouch, currentTouch, currentAngle;
 
 /**
  * This is the angle area of the arc that is used to ditribute items.
@@ -40,16 +37,17 @@ const distributionAngleThreshold = Math.PI;
  */
 dialItemsGroup.style.transform = "rotate(" + initialAngle + "rad)";
 
-// The outer dimensions of the dial semicircle in SVG coordinates.
-const SEMICIRCLEWIDTH = 600;
-const SEMICIRCLEHEIGHT = 300; // TODO rename to DIAL_EXTERNAL_RADIUS = 300
+/**
+ * The outer dimensions of the dial semicircle in SVG coordinates.
+ */
+const DIAL_EXTERNAL_RADIUS = 300;
 
 const middleButtonHeight = 40;
 const semiCircleThickness = 50;
 
 const arcAxis = semiCircleThickness / 2;
 
-const semiCircleInnerRadius = SEMICIRCLEHEIGHT - semiCircleThickness;
+const semiCircleInnerRadius = DIAL_EXTERNAL_RADIUS - semiCircleThickness;
 
 const absoluteArcAxis = semiCircleInnerRadius + semiCircleThickness / 2;
 
@@ -60,28 +58,30 @@ const viewBoxHeight = middleButtonHeight + semiCircleThickness;
 const viewBoxWidth =
   semiCircleInnerRadius *
   Math.sin(
-    Math.acos((SEMICIRCLEHEIGHT - viewBoxHeight) / semiCircleInnerRadius)
+    Math.acos((DIAL_EXTERNAL_RADIUS - viewBoxHeight) / semiCircleInnerRadius)
   ) *
   2;
 
 dialCanvas.setAttribute(
   "viewBox",
-  `${(SEMICIRCLEWIDTH - viewBoxWidth) / 2} 0 ${viewBoxWidth} ${viewBoxHeight}`
+  `${
+    (DIAL_EXTERNAL_RADIUS * 2 - viewBoxWidth) / 2
+  } 0 ${viewBoxWidth} ${viewBoxHeight}`
 );
 
 arcGradient.setAttribute(
   "gradientTransform",
   "translate(" +
-    (SEMICIRCLEWIDTH - viewBoxWidth) / 2 +
+    (DIAL_EXTERNAL_RADIUS * 2 - viewBoxWidth) / 2 +
     ", " +
-    (SEMICIRCLEHEIGHT - viewBoxHeight / 2) +
+    (DIAL_EXTERNAL_RADIUS - viewBoxHeight / 2) +
     ")"
 );
 arcGradient.setAttribute("fr", semiCircleInnerRadius);
 arcGradient.setAttribute("r", semiCircleInnerRadius + 15);
 
 const semiCirclePath = `M 0,300 H ${semiCircleThickness} A ${semiCircleInnerRadius},${semiCircleInnerRadius} 0 0 1 ${
-  SEMICIRCLEHEIGHT * 2 - semiCircleThickness
+  DIAL_EXTERNAL_RADIUS * 2 - semiCircleThickness
 },300 H 600 A 300,300 0 0 0 0,300 Z`;
 
 dialSemicircle.setAttribute("d", semiCirclePath);
@@ -89,7 +89,7 @@ dialSemicircle.setAttribute("d", semiCirclePath);
 const x = window.innerWidth / 2;
 const y =
   window.innerHeight +
-  ((SEMICIRCLEHEIGHT - viewBoxHeight) *
+  ((DIAL_EXTERNAL_RADIUS - viewBoxHeight) *
     dialCanvas.getBoundingClientRect().height) /
     viewBoxHeight;
 
@@ -210,7 +210,7 @@ function distribute() {
         "rotate(" +
         itemAngle +
         "rad) translate(0px, " +
-        (SEMICIRCLEHEIGHT - arcAxis) * -1 +
+        (DIAL_EXTERNAL_RADIUS - arcAxis) * -1 +
         "px) rotate(calc(" +
         -itemAngle +
         "rad - var(--current-angle, " +
