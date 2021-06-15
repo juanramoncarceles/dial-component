@@ -119,10 +119,16 @@ let currentLastVisible;
  */
 let currentFirstVisible;
 
-function createItemTransformation(positionOffset, rotationDirection) {
-  if (rotationDirection) positionOffset = positionOffset * -1;
+/**
+ * Creates the string that corresponds to the CSS transform for the given values.
+ * @param {number} positionOffset Integer that corresponds to the amount
+ * of passed angle steps for the current rotation from the initial rotation.
+ * @param {number} direction 1 for positive (counterclockwise) and 0 for negative (clockwise).
+ */
+function createItemTransformation(positionOffset, direction) {
+  if (direction) positionOffset = positionOffset * -1;
   let newAngle = (firstVisibleItemIndex - positionOffset) * angleBetweenItems;
-  if (rotationDirection) newAngle = newAngle * -1;
+  if (direction) newAngle = newAngle * -1;
   return (
     "rotate(" +
     newAngle +
@@ -137,52 +143,44 @@ function createItemTransformation(positionOffset, rotationDirection) {
 }
 
 /**
- * Called when passing an angle step when rotating clockwise.
- * Applies a transformation to show a new item from the left,
- * and to hide the current right-most item.
- * @param {number} positionOffset Integer that corresponds to the amount
- * of passed angle steps for the current rotation from the initial rotation.
+ * Calculates the new index for the item by increasing or decreasing it by one.
+ * @param {number} currentIndex
+ * @param {number} totalAmount
+ * @param {number} direction 1 for positive (counterclockwise) and 0 for negative (clockwise).
  */
-function negativeRotationItemReposition(positionOffset) {
-  // Hide the one that was visible from the right.
-  dialItems[currentLastVisible].style.display = "none";
-  dialItems[currentLastVisible].style.transform = "";
-  currentLastVisible--;
-  currentLastVisible =
-    currentLastVisible < 0 ? dialItemsAmount - 1 : currentLastVisible;
-  // Show a new one from the left.
-  currentFirstVisible--;
-  currentFirstVisible =
-    currentFirstVisible < 0 ? dialItemsAmount - 1 : currentFirstVisible;
-  dialItems[currentFirstVisible].style.display = "unset";
-  dialItems[currentFirstVisible].style.transform = createItemTransformation(
-    positionOffset,
-    false
-  );
+function shiftItemIndex(currentIndex, totalAmount, direction) {
+  direction ? currentIndex++ : currentIndex--;
+  return direction
+    ? currentIndex > totalAmount - 1
+      ? 0
+      : currentIndex
+    : currentIndex < 0
+    ? totalAmount - 1
+    : currentIndex;
 }
 
 /**
- * Called when passing an angle step when rotating counterclockwise.
- * Applies a transformation to show a new item from the right,
- * and to hide the current left-most item.
+ * Called after a rotation step has been passed, so an
+ * item should be hidden and another one displayed.
+ * Rotation step corresponds to the angle between two items.
  * @param {number} positionOffset Integer that corresponds to the amount
  * of passed angle steps for the current rotation from the initial rotation.
+ * @param {number} direction 1 for positive (counterclockwise) and 0 for negative (clockwise).
  */
-function positiveRotationItemReposition(positionOffset) {
-  // Hide the one that was visible from the left.
-  dialItems[currentFirstVisible].style.display = "none";
-  dialItems[currentFirstVisible].style.transform = "";
-  currentFirstVisible++;
-  currentFirstVisible =
-    currentFirstVisible > dialItemsAmount - 1 ? 0 : currentFirstVisible;
-  // Show a new one from the right.
-  currentLastVisible++;
-  currentLastVisible =
-    currentLastVisible > dialItemsAmount - 1 ? 0 : currentLastVisible;
-  dialItems[currentLastVisible].style.display = "unset";
-  dialItems[currentLastVisible].style.transform = createItemTransformation(
+function rotationItemManagement(
+  positionOffset,
+  itemToHideIndex,
+  itemToShowIndex,
+  direction
+) {
+  // Hide item.
+  dialItems[itemToHideIndex].style.display = "none";
+  dialItems[itemToHideIndex].style.transform = "";
+  // Show an item.
+  dialItems[itemToShowIndex].style.display = "unset";
+  dialItems[itemToShowIndex].style.transform = createItemTransformation(
     positionOffset,
-    true
+    direction
   );
 }
 
@@ -247,10 +245,40 @@ function handleMove(e) {
 
     if (currentAngle / angleBetweenItems > positionIndexOffset + 1) {
       positionIndexOffset = Math.floor(currentAngle / angleBetweenItems);
-      negativeRotationItemReposition(positionIndexOffset);
+      currentFirstVisible = shiftItemIndex(
+        currentFirstVisible,
+        dialItemsAmount,
+        0
+      );
+      rotationItemManagement(
+        positionIndexOffset,
+        currentLastVisible,
+        currentFirstVisible,
+        0
+      );
+      currentLastVisible = shiftItemIndex(
+        currentLastVisible,
+        dialItemsAmount,
+        0
+      );
     } else if (currentAngle / angleBetweenItems < positionIndexOffset - 1) {
       positionIndexOffset = Math.ceil(currentAngle / angleBetweenItems);
-      positiveRotationItemReposition(positionIndexOffset);
+      currentLastVisible = shiftItemIndex(
+        currentLastVisible,
+        dialItemsAmount,
+        1
+      );
+      rotationItemManagement(
+        positionIndexOffset,
+        currentFirstVisible,
+        currentLastVisible,
+        1
+      );
+      currentFirstVisible = shiftItemIndex(
+        currentFirstVisible,
+        dialItemsAmount,
+        1
+      );
     }
 
     if (straighten) {
